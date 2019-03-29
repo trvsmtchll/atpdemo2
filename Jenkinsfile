@@ -57,16 +57,16 @@ pipeline {
 				script {
 					//Get all cloud information.
 					env.DATA =  sh returnStdout: true, script: 'curl --header "X-Vault-Token: ${VAULT_TOKEN}" --request GET http://${VAULT_SERVER_IP}:8200/v1/secret/${VAULT_SECRET_NAME} | jq .data'
-					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid
-					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid
-					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint
-					env.api_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .api_private_key
-					env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .compartment_ocid
-					env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_public_key
-					env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_private_key
-					env.TF_VAR_region = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .region
-					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username
-					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password
+					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid'
+					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid'
+					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint'
+					env.api_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .api_private_key'
+					env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .compartment_ocid'
+					env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_public_key'
+					env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_private_key'
+					env.TF_VAR_region = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .region'
+					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username'
+					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password'
 					env.KUBECONFIG = './kubeconfig'
 				}
 				
