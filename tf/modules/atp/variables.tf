@@ -36,7 +36,7 @@ variable "autonomous_database_defined_tags_value" {
 }
 
 variable "autonomous_database_display_name" {
-  default = "demo_autonomous_database"
+  default = "Demo2_InfraAsCode_ATP"
 }
 
 variable "autonomous_data_warehouse_display_name" {
