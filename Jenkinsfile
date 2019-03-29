@@ -44,6 +44,9 @@ pipeline {
     stages {
         stage('Check Infra As Code Tools') {
             steps {
+				sh 'whoami'
+				sh 'pwd'
+				sh 'ls'
 			    sh 'chmod +x ./showtoolsversion.sh'
                 sh './showtoolsversion.sh'
             }
@@ -96,5 +99,19 @@ pipeline {
 				}
             }
         }
+		
+		stage('TF Plan Atp ') { 
+            steps {
+				dir ('./tf/modules/atp') {
+					sh 'ls'
+					
+					//Terraform initialization in order to get oci plugin provider	
+					sh 'terraform init -input=false -backend-config="address=${TF_VAR_terraform_state_url}"'
+					
+					//Terraform plan
+					sh 'terraform plan -out myplan'
+				}
+			}
+		}
     }    
 }
