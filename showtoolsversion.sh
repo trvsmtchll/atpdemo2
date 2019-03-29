@@ -17,3 +17,5 @@ oci --version
 java -version
 #Sqlcl
 exit | sql /nolog
+#Vault
+vault --version
