@@ -11,9 +11,12 @@ pipeline {
     }
     
     stages {
-        stage('Init Atp Variables') {
+        stage('Check Infra As Code Tools') {
             steps {
-                sh "./showtoolsversion.sh"
+                sh 'whoami'
+                sh 'pwd'
+
+                sh 'terraform --version'
             }
         }
     }    
