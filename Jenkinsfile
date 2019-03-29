@@ -113,5 +113,23 @@ pipeline {
 				}
 			}
 		}
+		
+		stage('TF Apply Atp ') { 
+            steps {
+				dir ('./tf/modules/atp') {
+					sh 'ls'
+					
+					script {
+						//Ask Question in order to apply terraform plan or not
+						def deploy_validation = input(
+							id: 'Deploy',
+							message: 'Let\'s continue the deploy plan',
+							type: "boolean")
+							
+						sh 'terraform apply -input=false -auto-approve myplan'
+					}		
+				}
+			}
+		}
     }    
 }
