@@ -13,6 +13,7 @@ pipeline {
     stages {
         stage('Check Infra As Code Tools') {
             steps {
+			    sh 'chmod +x ./showtoolsversion.sh'
                 sh './showtoolsversion.sh'
             }
         }
