@@ -13,10 +13,7 @@ pipeline {
     stages {
         stage('Check Infra As Code Tools') {
             steps {
-                sh 'whoami'
-                sh 'pwd'
-
-                sh 'terraform --version'
+                sh './showtoolsversion.sh'
             }
         }
     }    
