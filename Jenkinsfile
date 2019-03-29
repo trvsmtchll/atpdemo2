@@ -80,6 +80,20 @@ pipeline {
 				echo "DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}"
 				echo "DOCKERHUB_PASSWORD=${DOCKERHUB_PASSWORD}"
 				echo "KUBECONFIG=${KUBECONFIG}"
+				
+				dir ('./tf/modules/atp') {
+					script {
+						//Get the API key File with vault client because curl breaks the end line of the key file
+						sh 'vault kv get -field=api_private_key secret/demoatp | tr -d "\n" | base64 --decode > bmcs_api_key.pem'
+						
+						env.TF_VAR_private_key_path = './bmcs_api_key.pem'
+						
+						sh 'ls'
+						sh 'cat ./bmcs_api_key.pem'
+					}
+					
+					echo "TF_VAR_private_key_path=${TF_VAR_private_key_path}"
+				}
             }
         }
     }    
