@@ -68,6 +68,10 @@ pipeline {
 					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username'
 					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password'
 					env.KUBECONFIG = './kubeconfig'
+					
+					//Terraform debugg option if problem
+					env.TF_LOG=DEBUG 
+					env.OCI_GO_SDK_DEBUG=v
 				}
 				
 				//Check all cloud information.
@@ -119,11 +123,7 @@ pipeline {
 				dir ('./tf/modules/atp') {
 					sh 'ls'
 					
-					script {
-						//Terraform debugg option if problem
-						env.TF_LOG=DEBUG 
-						env.OCI_GO_SDK_DEBUG=v
-					
+					script {				
 						//Ask Question in order to apply terraform plan or not
 						def deploy_validation = input(
 							id: 'Deploy',
