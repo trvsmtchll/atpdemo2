@@ -120,6 +120,10 @@ pipeline {
 					sh 'ls'
 					
 					script {
+						//Terraform debugg option if problem
+						env.TF_LOG=DEBUG 
+						env.OCI_GO_SDK_DEBUG=v
+					
 						//Ask Question in order to apply terraform plan or not
 						def deploy_validation = input(
 							id: 'Deploy',
