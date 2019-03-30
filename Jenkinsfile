@@ -70,8 +70,8 @@ pipeline {
 					env.KUBECONFIG = './kubeconfig'
 					
 					//Terraform debugg option if problem
-					env.TF_LOG=DEBUG 
-					env.OCI_GO_SDK_DEBUG=v
+					env.TF_LOG="DEBUG"
+					env.OCI_GO_SDK_DEBUG="v"
 				}
 				
 				//Check all cloud information.
