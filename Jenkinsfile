@@ -121,6 +121,9 @@ pipeline {
 				sh 'echo "tenancy=${TF_VAR_tenancy_ocid}" >> /root/.oci/config'
 				sh 'echo "region=${TF_VAR_region}" >> /root/.oci/config'
 				sh 'cat /root/.oci/config'
+				
+				//OCI CLI permissions mandatory on some files.
+				sh 'oci setup repair-file-permissions --file /home/tomcat/.oci/config'
             }
         }
 		
@@ -179,6 +182,9 @@ pipeline {
                 dir ('./sql') {
 					script {
 						if (env.CHOICE == "Create") {
+							//OCI CLI permissions mandatory on some files.
+							sh 'oci setup repair-file-permissions --file ./bmcs_api_key.pem'
+							
 							//Get atp wallet
 							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
 							env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
