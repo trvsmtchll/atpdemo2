@@ -54,3 +54,7 @@ variable "autonomous_database_freeform_tags" {
 variable "autonomous_database_license_model" {
   default = "BRING_YOUR_OWN_LICENSE"
 }
+
+variable "autonomous_database_db_password" {
+  default = "AlphA_2019_!"
+}
