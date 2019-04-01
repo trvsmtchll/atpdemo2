@@ -60,10 +60,10 @@ pipeline {
 					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid'
 					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid'
 					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint'
-					env.api_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .api_private_key'
+					//env.api_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .api_private_key'
 					env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .compartment_ocid'
-					env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_public_key'
-					env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_private_key'
+					//env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_public_key'
+					//env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_private_key'
 					env.TF_VAR_region = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .region'
 					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username'
 					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password'
@@ -78,10 +78,10 @@ pipeline {
 				echo "TF_VAR_tenancy_ocid=${TF_VAR_tenancy_ocid}"
 				echo "TF_VAR_user_ocid=${TF_VAR_user_ocid}"
 				echo "TF_VAR_fingerprint=${TF_VAR_fingerprint}"
-				echo "api_private_key=${api_private_key}"
+				//echo "api_private_key=${api_private_key}"
 				echo "TF_VAR_compartment_ocid=${TF_VAR_compartment_ocid}"
-				echo "TF_VAR_ssh_public_key=${TF_VAR_ssh_public_key}"
-				echo "TF_VAR_ssh_private_key=${TF_VAR_ssh_private_key}"
+				//echo "TF_VAR_ssh_public_key=${TF_VAR_ssh_public_key}"
+				//echo "TF_VAR_ssh_private_key=${TF_VAR_ssh_private_key}"
 				echo "TF_VAR_region=${TF_VAR_region}"
 				echo "TF_VAR_terraform_state_url=${TF_VAR_terraform_state_url}"
 				echo "DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}"
@@ -90,16 +90,22 @@ pipeline {
 				
 				dir ('./tf/modules/atp') {
 					script {
-						//Get the API key File with vault client because curl breaks the end line of the key file
+						//Get the API and SSH key Files with vault client because curl breaks the end line of the key file
 						sh 'vault kv get -field=api_private_key secret/demoatp | tr -d "\n" | base64 --decode > bmcs_api_key.pem'
-						
-						env.TF_VAR_private_key_path = './bmcs_api_key.pem'
-						
+						sh 'vault kv get -field=ssh_private_key secret/demoatp | tr -d "\n" | base64 --decode > id_rsa'
+						sh 'vault kv get -field=ssh_public_key secret/demoatp | tr -d "\n" | base64 --decode > id_rsa.pub'
 						sh 'ls'
 						sh 'cat ./bmcs_api_key.pem'
+						sh 'cat ./id_rsa'
+						sh 'cat ./id_rsa.pub'
+						
+						env.TF_VAR_private_key_path = './bmcs_api_key.pem'
+						echo "TF_VAR_private_key_path=${TF_VAR_private_key_path}"
+						env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'cat ./id_rsa'
+						echo "TF_VAR_ssh_private_key=${TF_VAR_ssh_private_key}"
+						env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'cat ./id_rsa.pub
+						echo "TF_VAR_ssh_public_key=${TF_VAR_ssh_public_key}"
 					}
-					
-					echo "TF_VAR_private_key_path=${TF_VAR_private_key_path}"
 				}
             }
         }
