@@ -28,6 +28,7 @@ pipeline {
 		VAULT_SERVER_IP = "${params.VAULT_SERVER_IP}"
 		VAULT_ADDR = "http://${params.VAULT_SERVER_IP}:8200"
 		VAULT_SECRET_NAME = "${params.VAULT_SECRET_NAME}"
+		CHOICE = "${params.CHOICE}"
 		
 		//Database variables
 		TF_VAR_autonomous_database_db_name = "${params.DATABASE_NAME}"
@@ -136,8 +137,16 @@ pipeline {
 					//Terraform initialization in order to get oci plugin provider	
 					sh 'terraform init -input=false -backend-config="address=${TF_VAR_terraform_state_url}"'
 					
-					//Terraform plan
-					sh 'terraform plan -out myplan'
+					
+					script {
+					    //Terraform plan
+					    if (env.CHOICE == "Create") {
+					        sh 'terraform plan -out myplan'
+						}
+						else {
+						    sh 'terraform plan -destroy -out myplan'
+						}
+					}
 				}
 			}
 		}
