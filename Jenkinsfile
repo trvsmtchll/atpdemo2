@@ -97,6 +97,10 @@ pipeline {
 						sh 'vault kv get -field=api_private_key secret/demoatp | tr -d "\n" | base64 --decode > bmcs_api_key.pem'
 						sh 'vault kv get -field=ssh_private_key secret/demoatp | tr -d "\n" | base64 --decode > id_rsa'
 						sh 'vault kv get -field=ssh_public_key secret/demoatp | tr -d "\n" | base64 --decode > id_rsa.pub'
+						
+						//OCI CLI permissions mandatory on some files.
+						sh 'oci setup repair-file-permissions --file ./bmcs_api_key.pem'
+						
 						sh 'ls'
 						sh 'cat ./bmcs_api_key.pem'
 						sh 'cat ./id_rsa'
@@ -173,6 +177,11 @@ pipeline {
 					}
 					
 					sh 'ls'
+							
+					//Get atp wallet
+					sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
+					env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
+					sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_database_password} --file=./myatpwallet.zip'
 				}
 			}
 		}
@@ -182,14 +191,6 @@ pipeline {
                 dir ('./sql') {
 					script {
 						if (env.CHOICE == "Create") {
-							//OCI CLI permissions mandatory on some files.
-							sh 'oci setup repair-file-permissions --file ./bmcs_api_key.pem'
-							
-							//Get atp wallet
-							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
-							env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
-							sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_database_password} --file=./myatpwallet.zip'
-						
 							sh 'pwd'
 							sh 'cp ../tf/modules/atp/myatpwallet.zip ./'
 							sh 'unzip -o ./myatpwallet.zip'
