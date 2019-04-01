@@ -170,7 +170,7 @@ pipeline {
 					        sh 'terraform apply -input=false -auto-approve myplan'
 						}
 						else {
-						    sh 'terraform destroy -input=false -auto-approve myplan'
+						    sh 'terraform destroy -input=false -auto-approve'
 						}
 					}		
 				}
