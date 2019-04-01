@@ -123,7 +123,7 @@ pipeline {
 				sh 'cat /root/.oci/config'
 				
 				//OCI CLI permissions mandatory on some files.
-				sh 'oci setup repair-file-permissions --file /home/tomcat/.oci/config'
+				sh 'oci setup repair-file-permissions --file /root/.oci/config'
             }
         }
 		
