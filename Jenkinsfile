@@ -32,7 +32,7 @@ pipeline {
 		
 		//Database variables
 		TF_VAR_autonomous_database_db_name = "${params.DATABASE_NAME}"
-		TF_VAR_database_password = "${params.DATABASE_PASSWORD}"
+		TF_VAR_autonomous_database_db_password = "${params.DATABASE_PASSWORD}"
 		
 		//Terraform variables
 		TF_CLI_ARGS = "-no-color"
