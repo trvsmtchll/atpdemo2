@@ -56,7 +56,7 @@ pipeline {
             steps {
 				script {
 					//Get all cloud information.
-					env.DATA =  sh returnStdout: true, script: 'curl --header "X-Vault-Token: ${VAULT_TOKEN}" --request GET http://${VAULT_SERVER_IP}:8200/v1/secret/data/${VAULT_SECRET_NAME} | jq .data'
+					env.DATA =  sh returnStdout: true, script: 'curl --header "X-Vault-Token: ${VAULT_TOKEN}" --request GET http://${VAULT_SERVER_IP}:8200/v1/secret/data/${VAULT_SECRET_NAME} | jq .data.data'
 					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid'
 					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid'
 					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint'
