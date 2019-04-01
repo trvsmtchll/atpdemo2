@@ -46,6 +46,10 @@ pipeline {
     stages {
         stage('Check Infra As Code Tools') {
             steps {
+			    wrap([$class:'BuildUser']) {
+				    echo "${BUILD_USER}"
+				}
+			
 				sh 'whoami'
 				sh 'pwd'
 				sh 'ls'
@@ -58,34 +62,13 @@ pipeline {
             steps {
 				script {
 					//Get all cloud information.
-					//env.DATA =  sh returnStdout: true, script: 'curl --header "X-Vault-Token: ${VAULT_TOKEN}" --request GET http://${VAULT_SERVER_IP}:8200/v1/secret/data/${VAULT_SECRET_NAME} | jq .data.data'
-					
-					//env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid'
 					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'vault kv get -field=tenancy_ocid secret/demoatp'
-					
-					//env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid'
 					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'vault kv get -field=user_ocid secret/demoatp'
-					
-					//env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint'
 					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'vault kv get -field=fingerprint secret/demoatp'
-					
-					//env.api_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .api_private_key'
-					
-					//env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .compartment_ocid'
 					env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'vault kv get -field=compartment_ocid secret/demoatp'
-					
-					//env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_public_key'
-					//env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_private_key'
-					
-					//env.TF_VAR_region = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .region'
 					env.TF_VAR_region = sh returnStdout: true, script: 'vault kv get -field=region secret/demoatp'
-					
-					//env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username'
 					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'vault kv get -field=dockerhub_username secret/demoatp'
-					
-					//env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password'
 					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'vault kv get -field=dockerhub_password secret/demoatp'
-					
 					env.KUBECONFIG = './kubeconfig'
 					
 					//Terraform debugg option if problem
@@ -97,10 +80,7 @@ pipeline {
 				echo "TF_VAR_tenancy_ocid=${TF_VAR_tenancy_ocid}"
 				echo "TF_VAR_user_ocid=${TF_VAR_user_ocid}"
 				echo "TF_VAR_fingerprint=${TF_VAR_fingerprint}"
-				//echo "api_private_key=${api_private_key}"
 				echo "TF_VAR_compartment_ocid=${TF_VAR_compartment_ocid}"
-				//echo "TF_VAR_ssh_public_key=${TF_VAR_ssh_public_key}"
-				//echo "TF_VAR_ssh_private_key=${TF_VAR_ssh_private_key}"
 				echo "TF_VAR_region=${TF_VAR_region}"
 				echo "TF_VAR_terraform_state_url=${TF_VAR_terraform_state_url}"
 				echo "DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}"
@@ -109,7 +89,7 @@ pipeline {
 				
 				dir ('./tf/modules/atp') {
 					script {
-						//Get the API and SSH key Files with vault client because curl breaks the end line of the key file
+						//Get the API and SSH encoded key Files with vault client because curl breaks the end line of the key file
 						sh 'vault kv get -field=api_private_key secret/demoatp | tr -d "\n" | base64 --decode > bmcs_api_key.pem'
 						sh 'vault kv get -field=ssh_private_key secret/demoatp | tr -d "\n" | base64 --decode > id_rsa'
 						sh 'vault kv get -field=ssh_public_key secret/demoatp | tr -d "\n" | base64 --decode > id_rsa.pub'
