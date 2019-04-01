@@ -56,17 +56,34 @@ pipeline {
             steps {
 				script {
 					//Get all cloud information.
-					env.DATA =  sh returnStdout: true, script: 'curl --header "X-Vault-Token: ${VAULT_TOKEN}" --request GET http://${VAULT_SERVER_IP}:8200/v1/secret/data/${VAULT_SECRET_NAME} | jq .data.data'
-					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid'
-					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid'
-					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint'
+					//env.DATA =  sh returnStdout: true, script: 'curl --header "X-Vault-Token: ${VAULT_TOKEN}" --request GET http://${VAULT_SERVER_IP}:8200/v1/secret/data/${VAULT_SECRET_NAME} | jq .data.data'
+					
+					//env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .tenancy_ocid'
+					env.TF_VAR_tenancy_ocid = sh returnStdout: true, script: 'vault kv get -field=tenancy_ocid secret/demoatp'
+					
+					//env.TF_VAR_user_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .user_ocid'
+					env.TF_VAR_user_ocid = sh returnStdout: true, script: 'vault kv get -field=user_ocid secret/demoatp'
+					
+					//env.TF_VAR_fingerprint = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .fingerprint'
+					env.TF_VAR_fingerprint = sh returnStdout: true, script: 'vault kv get -field=fingerprint secret/demoatp'
+					
 					//env.api_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .api_private_key'
-					env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .compartment_ocid'
+					
+					//env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .compartment_ocid'
+					env.TF_VAR_compartment_ocid = sh returnStdout: true, script: 'vault kv get -field=compartment_ocid secret/demoatp'
+					
 					//env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_public_key'
 					//env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .ssh_private_key'
-					env.TF_VAR_region = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .region'
-					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username'
-					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password'
+					
+					//env.TF_VAR_region = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .region'
+					env.TF_VAR_region = sh returnStdout: true, script: 'vault kv get -field=region secret/demoatp'
+					
+					//env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_username'
+					env.DOCKERHUB_USERNAME = sh returnStdout: true, script: 'vault kv get -field=dockerhub_username secret/demoatp'
+					
+					//env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'echo ${DATA}  | jq -r .dockerhub_password'
+					env.DOCKERHUB_PASSWORD = sh returnStdout: true, script: 'vault kv get -field=dockerhub_password secret/demoatp'
+					
 					env.KUBECONFIG = './kubeconfig'
 					
 					//Terraform debugg option if problem
