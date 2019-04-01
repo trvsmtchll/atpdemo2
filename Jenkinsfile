@@ -169,7 +169,7 @@ pipeline {
 					script {
 						if (env.CHOICE == "Create") {
 							//Get atp wallet
-							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo_InfraAsCode_ATW | jq -r .data[0].id > result.test'	
+							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
 							env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
 							sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_database_password} --file=./myatpwallet.zip'
 						
