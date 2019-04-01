@@ -215,8 +215,8 @@ pipeline {
 							}
 							else {
 								sh 'echo "Go Create Shema"'
-								sh 'exit | /opt/sqlcl/bin/sql -oci admin/${TF_VAR_autonomous_database_db_password}@${TF_VAR_autonomous_database_db_name}_HIGH @./create_schema.sql'
-								sh 'exit | /opt/sqlcl/bin/sql -oci admin/${TF_VAR_autonomous_database_db_password}@${TF_VAR_autonomous_database_db_name}_HIGH @./create_tables.sql'
+								sh 'exit | sql -oci admin/${TF_VAR_autonomous_database_db_password}@${TF_VAR_autonomous_database_db_name}_HIGH @./create_schema.sql'
+								sh 'exit | sql -oci admin/${TF_VAR_autonomous_database_db_password}@${TF_VAR_autonomous_database_db_name}_HIGH @./create_tables.sql'
 							}
 						}
 						else {
