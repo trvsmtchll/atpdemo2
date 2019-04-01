@@ -139,6 +139,7 @@ pipeline {
 					
 					
 					script {
+						echo "CHOICE=${env.CHOICE}"
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
 					        sh 'terraform plan -out myplan'
