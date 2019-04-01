@@ -112,6 +112,7 @@ pipeline {
 				}
 				
 				//OCI CLI Setup
+				sh 'mkdir -p /root/.oci'
 				sh 'rm -rf /root/.oci/config'
 				sh 'echo "[DEFAULT]" > /root/.oci/config'
 				sh 'echo "user=${TF_VAR_user_ocid}" >> /root/.oci/config'
