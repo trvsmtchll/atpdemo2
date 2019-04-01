@@ -168,8 +168,13 @@ pipeline {
                 dir ('./sql') {
 					script {
 						if (env.CHOICE == "Create") {
+							//Get atp wallet
+							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo_InfraAsCode_ATW | jq -r .data[0].id > result.test'	
+							env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
+							sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_database_password} --file=./myatpwallet.zip'
+						
 							sh 'pwd'
-							sh 'cp ../tf/modules/atp/autonomous_database_wallet.zip ./myatpwallet.zip'
+							sh 'cp ../tf/modules/atp/myatpwallet.zip ./'
 							sh 'unzip -o ./myatpwallet.zip'
 							sh 'ls'
 							//Prepare sqlcl oci option
