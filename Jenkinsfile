@@ -44,12 +44,16 @@ pipeline {
 	}
     
     stages {
-        stage('Check Infra As Code Tools') {
+		stage('Display User Name') {
             steps {
 			    wrap([$class:'BuildUser']) {
 				    echo "${BUILD_USER}"
 				}
-			
+            }
+        }
+	
+        stage('Check Infra As Code Tools') {
+            steps {
 				sh 'whoami'
 				sh 'pwd'
 				sh 'ls'
