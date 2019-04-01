@@ -163,8 +163,15 @@ pipeline {
 							id: 'Deploy',
 							message: 'Let\'s continue the deploy plan',
 							type: "boolean")
-							
-						sh 'terraform apply -input=false -auto-approve myplan'
+						
+						echo "CHOICE=${env.CHOICE}"
+					    //Terraform plan
+					    if (env.CHOICE == "Create") {
+					        sh 'terraform apply -input=false -auto-approve myplan'
+						}
+						else {
+						    sh 'terraform destroy -input=false -auto-approve myplan'
+						}
 					}		
 				}
 			}
