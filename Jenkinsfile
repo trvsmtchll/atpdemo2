@@ -103,7 +103,7 @@ pipeline {
 						echo "TF_VAR_private_key_path=${TF_VAR_private_key_path}"
 						env.TF_VAR_ssh_private_key = sh returnStdout: true, script: 'cat ./id_rsa'
 						echo "TF_VAR_ssh_private_key=${TF_VAR_ssh_private_key}"
-						env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'cat ./id_rsa.pub
+						env.TF_VAR_ssh_public_key = sh returnStdout: true, script: 'cat ./id_rsa.pub'
 						echo "TF_VAR_ssh_public_key=${TF_VAR_ssh_public_key}"
 					}
 				}
