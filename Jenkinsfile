@@ -110,6 +110,16 @@ pipeline {
 						echo "TF_VAR_ssh_public_key=${TF_VAR_ssh_public_key}"
 					}
 				}
+				
+				//OCI CLI Setup
+				sh 'rm -rf /root/.oci/config'
+				sh 'echo "[DEFAULT]" > /root/.oci/config'
+				sh 'echo "user=${TF_VAR_user_ocid}" >> /root/.oci/config'
+				sh 'echo "fingerprint=${TF_VAR_fingerprint}" >> /root/.oci/config'
+				sh 'echo "key_file=./bmcs_api_key.pem" >> /root/.oci/config'
+				sh 'echo "tenancy=${TF_VAR_tenancy_ocid}" >> /root/.oci/config'
+				sh 'echo "region=${TF_VAR_region}" >> /root/.oci/config'
+				sh 'cat /root/.oci/config'
             }
         }
 		
