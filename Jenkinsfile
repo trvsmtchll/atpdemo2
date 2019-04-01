@@ -166,32 +166,38 @@ pipeline {
 		stage('Create Schema in Atp') {
             steps {
                 dir ('./sql') {
-                    sh 'pwd'
-                    sh 'cp ../tf/modules/atp/autonomous_database_wallet.zip ./myatpwallet.zip'
-					sh 'unzip -o ./myatpwallet.zip'
-					sh 'ls'
-					//Prepare sqlcl oci option
-					sh 'echo $TNS_ADMIN'
-					sh 'rm -rf ./sqlnet.ora'
-					sh 'mv ./sqlnet.ora.ref ./sqlnet.ora'
-					sh 'cat ./tnsnames.ora'
-                    sh 'cat ./sqlnet.ora'
-					//Check Connection to Atp
-					sh 'exit | sql -oci admin/${TF_VAR_database_password}@${TF_VAR_autonomous_database_db_name}_HIGH @./show_version.sql'
-					//Create schema in Atp
-					sh 'exit | sql -oci admin/${TF_VAR_database_password}@{TF_VAR_autonomous_database_db_name}_HIGH @./check_schema.sql'
-					sh 'ls'
-					sh 'cat ./result.test'
 					script {
-						env.CHECK_SCHEMA=sh(script: 'cat ./result.test', returnStdout: true).trim()
+						if (env.CHOICE == "Create") {
+							sh 'pwd'
+							sh 'cp ../tf/modules/atp/autonomous_database_wallet.zip ./myatpwallet.zip'
+							sh 'unzip -o ./myatpwallet.zip'
+							sh 'ls'
+							//Prepare sqlcl oci option
+							sh 'echo $TNS_ADMIN'
+							sh 'rm -rf ./sqlnet.ora'
+							sh 'mv ./sqlnet.ora.ref ./sqlnet.ora'
+							sh 'cat ./tnsnames.ora'
+							sh 'cat ./sqlnet.ora'
+							//Check Connection to Atp
+							sh 'exit | sql -oci admin/${TF_VAR_database_password}@${TF_VAR_autonomous_database_db_name}_HIGH @./show_version.sql'
+							//Create schema in Atp
+							sh 'exit | sql -oci admin/${TF_VAR_database_password}@{TF_VAR_autonomous_database_db_name}_HIGH @./check_schema.sql'
+							sh 'ls'
+							sh 'cat ./result.test'
 						
-						if (env.CHECK_SCHEMA == "1") {
-							sh 'echo "Shema already exist"'
+							env.CHECK_SCHEMA=sh(script: 'cat ./result.test', returnStdout: true).trim()
+							
+							if (env.CHECK_SCHEMA == "1") {
+								sh 'echo "Shema already exist"'
+							}
+							else {
+								sh 'echo "Go Create Shema"'
+								sh 'exit | /opt/sqlcl/bin/sql -oci admin/${TF_VAR_database_password}@atpdb_HIGH @./create_schema.sql'
+								sh 'exit | /opt/sqlcl/bin/sql -oci admin/${TF_VAR_database_password}@atpdb_HIGH @./create_tables.sql'
+							}
 						}
 						else {
-							sh 'echo "Go Create Shema"'
-							sh 'exit | /opt/sqlcl/bin/sql -oci admin/${TF_VAR_database_password}@atpdb_HIGH @./create_schema.sql'
-							sh 'exit | /opt/sqlcl/bin/sql -oci admin/${TF_VAR_database_password}@atpdb_HIGH @./create_tables.sql'
+							echo "Nothing To Do Cause Db is Destroyed"
 						}
 					}	
                 }
