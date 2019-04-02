@@ -144,7 +144,18 @@ pipeline {
 						echo "CHOICE=${env.CHOICE}"
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
-					        sh 'terraform plan -out myplan'
+							//Check if Db is already there
+							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP --lifecycle-state=AVAILABLE | jq ". | length" > result.test'	
+							env.CHECK_DB = sh (script: 'cat ./result.test', returnStdout: true).trim()
+							sh 'echo ${CHECK_DB}'
+							
+							if (env.CHECK_DB == "1") {
+								echo "Db Already Exists"
+							}
+							else {
+								sh 'terraform plan -out myplan'
+							}
+							
 						}
 						else {
 						    sh 'terraform plan -destroy -out myplan'
@@ -169,11 +180,6 @@ pipeline {
 						echo "CHOICE=${env.CHOICE}"
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
-						
-							//Check if Db is already there
-							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP --lifecycle-state=AVAILABLE | jq ". | length" > result.test'	
-							env.CHECK_DB = sh (script: 'cat ./result.test', returnStdout: true).trim()
-							sh 'echo ${CHECK_DB}'
 							
 							if (env.CHECK_DB == "1") {
 								echo "Db Already Exists"
