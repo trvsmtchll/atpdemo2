@@ -169,7 +169,19 @@ pipeline {
 						echo "CHOICE=${env.CHOICE}"
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
-					        sh 'terraform apply -input=false -auto-approve myplan'
+						
+							//Check if Db is already there
+							sh '/home/tomcat/bin/oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP --lifecycle-state=AVAILABLE | jq ". | length" > result.test'	
+							env.CHECK_DB = sh (script: 'cat ./result.test', returnStdout: true).trim()
+							sh 'echo ${CHECK_DB}'
+							
+							if (env.CHECK_DB == "1") {
+								echo "Db Already Exists"
+							}
+							else {
+								echo "Go Create Db"
+								sh 'terraform apply -input=false -auto-approve myplan'
+							}	
 							
 							sh 'ls'
 							
@@ -284,6 +296,9 @@ pipeline {
 		
             steps {
 				dir ('./docker') {
+					sh 'whoami'
+					sh 'pwd'
+					sh 'ls'
 					sh 'docker --version'
 				}
 			}
