@@ -171,7 +171,7 @@ pipeline {
 					    if (env.CHOICE == "Create") {
 						
 							//Check if Db is already there
-							sh '/home/tomcat/bin/oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP --lifecycle-state=AVAILABLE | jq ". | length" > result.test'	
+							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP --lifecycle-state=AVAILABLE | jq ". | length" > result.test'	
 							env.CHECK_DB = sh (script: 'cat ./result.test', returnStdout: true).trim()
 							sh 'echo ${CHECK_DB}'
 							
