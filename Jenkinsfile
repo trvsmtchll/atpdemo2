@@ -2,7 +2,7 @@ pipeline {
     //agent by default
     //agent any
 
-    //use a docker image instead of the jenkins host
+    //use a docker image instead of the jenkins agent host
     agent {
         docker { 
             image 'cpruvost/infraascode:latest'
@@ -310,21 +310,6 @@ pipeline {
 						    sh 'terraform destroy -input=false -auto-approve'
 						}
 					}
-				}
-			}
-		}
-		
-		agent any
-		
-		stage('Docker Build Application Image') { 
-            steps {
-				dir ('./docker') {
-					script {
-						sh 'whoami'
-						sh 'pwd'
-						sh 'ls'
-						sh 'docker --version'
-					}	
 				}
 			}
 		}
