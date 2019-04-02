@@ -170,17 +170,17 @@ pipeline {
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
 					        sh 'terraform apply -input=false -auto-approve myplan'
+							
+							sh 'ls'
+							
+							//Get atp wallet
+							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
+							env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
+							sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_autonomous_database_db_password} --file=./myatpwallet.zip'
 						}
 						else {
 						    sh 'terraform destroy -input=false -auto-approve'
 						}
-						
-						sh 'ls'
-							
-						//Get atp wallet
-						sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
-						env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
-						sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_autonomous_database_db_password} --file=./myatpwallet.zip'
 					}
 				}
 			}
@@ -226,5 +226,28 @@ pipeline {
                 }
             }
         }
+		
+		stage('TF Plan Oke ') { 
+            steps {
+				dir ('./tf/modules/oke') {
+					sh 'ls'
+					
+					//Terraform initialization in order to get oci plugin provider	
+					sh 'terraform init -input=false -backend-config="address=${TF_VAR_terraform_state_url}"'
+					
+					
+					script {
+						echo "CHOICE=${env.CHOICE}"
+					    //Terraform plan
+					    if (env.CHOICE == "Create") {
+					        sh 'terraform plan -out myplan'
+						}
+						else {
+						    sh 'terraform plan -destroy -out myplan'
+						}
+					}
+				}
+			}
+		}
     }    
 }
