@@ -316,7 +316,7 @@ pipeline {
 		
 		stage('Docker Build Application Image') { 
 			agent{
-				label docker
+				label 'dockerandkubernes'
 			}
 		
             steps {
