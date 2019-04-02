@@ -259,9 +259,20 @@ pipeline {
 					
 					script {
 						echo "CHOICE=${env.CHOICE}"
+						
+						//Check if Oke is already there
+						sh 'oci ce cluster list --compartment-id=${TF_VAR_compartment_ocid} --name=Demo2_InfraAsCode_OKE --lifecycle-state=ACTIVE | jq ". | length" > result.test'	
+						env.CHECK_OKE = sh (script: 'cat ./result.test', returnStdout: true).trim()
+						sh 'echo ${CHECK_OKE}'
+						
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
-					        sh 'terraform plan -out myplan'
+							if (env.CHECK_OKE == "1") {
+								echo "Oke Already Exists"
+							}
+							else {
+								sh 'terraform plan -out myplan'
+							}	
 						}
 						else {
 						    sh 'terraform plan -destroy -out myplan'
@@ -277,17 +288,23 @@ pipeline {
 					sh 'ls'
 					
 					script {				
-						//Ask Question in order to apply terraform plan or not
-						def deploy_validation = input(
-							id: 'Deploy',
-							message: 'Let\'s continue the deploy plan',
-							type: "boolean")
-						
 						echo "CHOICE=${env.CHOICE}"
 					    //Terraform plan
+						
 					    if (env.CHOICE == "Create") {
-					        sh 'terraform apply -input=false -auto-approve myplan'
-							sh 'ls'
+							if (env.CHECK_OKE == "1") {
+								echo "Oke Already Exists"
+							}
+							else {
+								//Ask Question in order to apply terraform plan or not
+								def deploy_validation = input(
+								id: 'Deploy',
+								message: 'Let\'s continue the deploy plan',
+								type: "boolean")
+								
+								sh 'terraform apply -input=false -auto-approve myplan'
+								sh 'ls'
+							}	
 						}
 						else {
 						    sh 'terraform destroy -input=false -auto-approve'
