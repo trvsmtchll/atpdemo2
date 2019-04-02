@@ -319,10 +319,12 @@ pipeline {
 		
             steps {
 				dir ('./docker') {
-					sh 'whoami'
-					sh 'pwd'
-					sh 'ls'
-					sh 'docker --version'
+					script {
+						sh 'whoami'
+						sh 'pwd'
+						sh 'ls'
+						sh 'docker --version'
+					}	
 				}
 			}
 		}
