@@ -315,7 +315,9 @@ pipeline {
 		}
 		
 		stage('Docker Build Application Image') { 
-			agent any
+			agent{
+				label docker
+			}
 		
             steps {
 				dir ('./docker') {
