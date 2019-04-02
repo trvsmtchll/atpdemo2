@@ -281,7 +281,7 @@ pipeline {
 		
 		stage('Docker Build Application Image') { 
 			agent {
-				master
+				label master
 			}	
 		
             steps {
