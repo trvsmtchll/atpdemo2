@@ -314,11 +314,9 @@ pipeline {
 			}
 		}
 		
-		stage('Docker Build Application Image') { 
-			agent{
-				label 'dockerandkubernes'
-			}
+		agent any
 		
+		stage('Docker Build Application Image') { 
             steps {
 				dir ('./docker') {
 					script {
