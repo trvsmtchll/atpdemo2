@@ -173,7 +173,7 @@ pipeline {
 							
 							sh 'ls'
 							
-							//Get atp wallet
+							//Get atp wallet because initial atp wallet from terraform seems to have problem during unzip.
 							sh 'oci db autonomous-database list --compartment-id=${TF_VAR_compartment_ocid} --display-name=Demo2_InfraAsCode_ATP | jq -r .data[0].id > result.test'	
 							env.DB_OCID = sh (script: 'cat ./result.test', returnStdout: true).trim()
 							sh 'oci db autonomous-database generate-wallet --autonomous-database-id=${DB_OCID} --password=${TF_VAR_autonomous_database_db_password} --file=./myatpwallet.zip'
@@ -247,6 +247,32 @@ pipeline {
 						}
 						else {
 						    sh 'terraform plan -destroy -out myplan'
+						}
+					}
+				}
+			}
+		}
+		
+		stage('TF Apply Oke') { 
+            steps {
+				dir ('./tf/modules/oke') {
+					sh 'ls'
+					
+					script {				
+						//Ask Question in order to apply terraform plan or not
+						def deploy_validation = input(
+							id: 'Deploy',
+							message: 'Let\'s continue the deploy plan',
+							type: "boolean")
+						
+						echo "CHOICE=${env.CHOICE}"
+					    //Terraform plan
+					    if (env.CHOICE == "Create") {
+					        sh 'terraform apply -input=false -auto-approve myplan'
+							sh 'ls'
+						}
+						else {
+						    sh 'terraform destroy -input=false -auto-approve'
 						}
 					}
 				}
