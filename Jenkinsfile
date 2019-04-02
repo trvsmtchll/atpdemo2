@@ -171,13 +171,8 @@ pipeline {
 					sh 'ls'
 					
 					script {				
-						//Ask Question in order to apply terraform plan or not
-						def deploy_validation = input(
-							id: 'Deploy',
-							message: 'Let\'s continue the deploy plan',
-							type: "boolean")
-						
 						echo "CHOICE=${env.CHOICE}"
+						
 					    //Terraform plan
 					    if (env.CHOICE == "Create") {
 							
@@ -185,7 +180,12 @@ pipeline {
 								echo "Db Already Exists"
 							}
 							else {
-								echo "Go Create Db"
+								//Ask Question in order to apply terraform plan or not
+								def deploy_validation = input(
+								id: 'Deploy',
+								message: 'Let\'s continue the deploy plan',
+								type: "boolean")
+							
 								sh 'terraform apply -input=false -auto-approve myplan'
 							}	
 							
