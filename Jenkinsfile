@@ -1,14 +1,6 @@
 pipeline {
-    //agent by default
-    //agent any
-
-    //use a docker image instead of the jenkins agent host
-    agent {
-        docker { 
-            image 'cpruvost/infraascode:latest'
-            args '-u root:root'
-        }
-    }
+ 
+    agent none
 	
 	//Parameters of the pipeline. You can define more parameters in this pipeline in order to have less hard code variables.
 	parameters {
@@ -45,6 +37,7 @@ pipeline {
     
     stages {
 		stage('Display User Name') {
+			agent any
             steps {
 			    wrap([$class:'BuildUser']) {
 				    echo "${BUILD_USER}"
@@ -53,6 +46,13 @@ pipeline {
         }
 	
         stage('Check Infra As Code Tools') {
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
 				sh 'whoami'
 				sh 'pwd'
@@ -63,6 +63,13 @@ pipeline {
         }
 		
 		stage('Init Cloud Env Variables') {
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
 				script {
 					//Get all cloud information.
@@ -132,6 +139,13 @@ pipeline {
         }
 		
 		stage('TF Plan Atp ') { 
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
 				dir ('./tf/modules/atp') {
 					sh 'ls'
@@ -166,6 +180,13 @@ pipeline {
 		}
 		
 		stage('TF Apply Atp ') { 
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
 				dir ('./tf/modules/atp') {
 					sh 'ls'
@@ -205,6 +226,13 @@ pipeline {
 		}
 		
 		stage('Create Schema in Atp') {
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
                 dir ('./sql') {
 					script {
@@ -246,6 +274,13 @@ pipeline {
         }
 		
 		stage('TF Plan Oke') { 
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
 				dir ('./tf/modules/oke') {
 					sh 'ls'
@@ -283,6 +318,13 @@ pipeline {
 		}
 		
 		stage('TF Apply Oke') { 
+			agent {
+				docker { 
+					image 'cpruvost/infraascode:latest'
+					args '-u root:root'
+				}
+			}
+			
             steps {
 				dir ('./tf/modules/oke') {
 					sh 'ls'
